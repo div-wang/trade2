@@ -1,0 +1,23 @@
+const zhuanzhuan = require("../../../handler/zhuanzhuan");
+
+const app = async (ctx) => {
+  let req = { code: 0, msg: "ok" };
+  try {
+    let { user } = ctx.request.body;
+    const config = configs.grabInfo[user];
+    const zhuan = new zhuanzhuan(config);
+    const list = await zhuan.getOrderIds();
+    logger.info("orderIds", list);
+    for (let i = 0; i < list.length; i++) {
+      if (i > 16) continue;
+      const orderId = list[i];
+      await zhuan.getChildOrderIds(orderId);
+    }
+  } catch (error) {
+    logger.error(error);
+    req = { code: 1, msg: error };
+  }
+  return req;
+};
+
+module.exports = app;

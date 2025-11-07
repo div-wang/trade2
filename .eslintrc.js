@@ -1,0 +1,35 @@
+module.exports = {
+  env: {
+    browser: true,
+    commonjs: true,
+    es6: true,
+    node: true,
+  },
+  globals: {
+    PrometheusRegister: true,
+    PrometheusClient: true,
+    redisClient: true,
+    kafka: true,
+    kafkaProducer: true,
+    browser: true,
+    configs: true,
+    request: true,
+    logger: true,
+    debug: true,
+    env: true,
+    ES: true,
+  },
+  extends: ["eslint:recommended"],
+  parserOptions: {
+    sourceType: "module",
+    ecmaVersion: 2017,
+  },
+  rules: {
+    "no-unused-vars": [1],
+    "no-console": [0],
+    indent: [1, 2, { SwitchCase: 1 }],
+    semi: [2, "always"],
+    "require-yield": [0],
+    "linebreak-style": "off",
+  },
+};
