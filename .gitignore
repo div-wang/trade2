@@ -11,12 +11,10 @@ Thumbs.db
 .idea/
 temp/
 logs/
-test/
 images/
 node_modules/
 start.log
 config/aigc/
 package-lock.json
-customConfig.js
 ffmpeg
 yarn.lock
