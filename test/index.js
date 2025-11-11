@@ -1,4 +1,4 @@
-const { modifySheetData } = require("../handler/feishu");
+const { findSheetData, modifySheetData } = require("../handler/feishu");
 
 const app = async () => {
   // const {spreadsheet_token, sheet_id} = configs.grabInfo.ya

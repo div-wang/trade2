@@ -2,7 +2,7 @@
  * @Author: Div gh110827@gmail.com
  * @Date: 2025-10-26 21:35:47
  * @LastEditors: Div gh110827@gmail.com
- * @LastEditTime: 2025-11-07 19:41:53
+ * @LastEditTime: 2025-11-11 10:35:47
  * @Description:
  * Copyright (c) 2025 by ${git_name_email}, All Rights Reserved.
  */
@@ -222,12 +222,11 @@ class zhuanzhaun {
           subTitle,
         };
         // 验机不合格的具体信息
-        if (data.defectReportInfo) {
+        if (data.defectReportInfo && data.defect === "") {
+          childOrderInfo.defect = oldOrderInfo.defect + "||"
           data.defectReportInfo.itemInfo.forEach((item) => {
             childOrderInfo.defect += item.itemName + ":" + item.value + "; ";
           });
-        } else if (oldOrderInfo.defect) {
-          childOrderInfo.defect = oldOrderInfo.defect;
         }
         return childOrderInfo;
       } catch (error) {
