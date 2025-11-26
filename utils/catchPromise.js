@@ -11,7 +11,7 @@ const app = (callback) => {
       callback(resolve, reject);
     } catch (err) {
       // console.log(err)
-      logger.error(err);
+      Logger.error(err);
     }
   });
 };

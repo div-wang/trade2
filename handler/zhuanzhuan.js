@@ -2,14 +2,13 @@
  * @Author: Div gh110827@gmail.com
  * @Date: 2025-10-26 21:35:47
  * @LastEditors: Div gh110827@gmail.com
- * @LastEditTime: 2025-11-11 10:35:47
+ * @LastEditTime: 2025-11-26 11:47:02
  * @Description:
  * Copyright (c) 2025 by ${git_name_email}, All Rights Reserved.
  */
 const axios = require("axios");
 const { wrapper } = require("axios-cookiejar-support");
 const { CookieJar } = require("tough-cookie");
-const { createFile, readFile, json2Excel } = require("../utils/file");
 const {
   getSpreadsheetSheets,
   getSheetData,
@@ -21,37 +20,18 @@ const {
 class zhuanzhaun {
   // 构造方法（初始化实例属性）
   constructor(data) {
-    // this.orderIds = readFile("./dist/dataOrder.json");
-    //子订单缓存数据
-    this.childOrderCache = {};
-    this.insertSheetNo = 1;
     for (const key in data) {
       this[key] = data[key];
     }
-    // this.cookies = data.cookie;
-    // this,spreadsheet_token = data.spreadsheet_token
-    // this.sheet_id = data.sheet_id;
-    // this.sheet_id2 = data.sheet_id2;
-    this.init()
-  }
-  async init() {
-    // 读取飞书文档数据
-    const res = await getSheetData(this.spreadsheet_token, this.sheet_id2, "");
-    const values = res.data.valueRange.values;
-    const fieldArr = values[0];
-    for (let index = 1; index < values.length; index++) {
-      const arr = values[index];
-      const childOrder = {};
-      for (let j = 0; j < arr.length; j++) {
-        childOrder[fieldArr[j]] = arr[j];
-      }
-      // 缓存数据
-      childOrder.no = index;
-      this.childOrderCache[childOrder.orderId] = childOrder;
-    }
+    //子订单缓存数据
+    this.childOrderCache = ChildOrderCache[this.user] || {}
     this.insertSheetNo = 1;
   }
-  async requestUrl(url) {
+  // async init() {
+  //   this.childOrderCache = ChildOrderCache[this.user] || {}
+  //   this.insertSheetNo = 1;
+  // }
+  async initRequest(url) {
     // 创建 CookieJar 实例（自动管理 Cookie）
     const cookieJar = new CookieJar();
     const axiosWithCookie = wrapper(
@@ -68,7 +48,17 @@ class zhuanzhaun {
     for (const cookie of cookieParts) {
       await cookieJar.setCookie(cookie, url); // 逐个添加，确保兼容性
     }
-    return await axiosWithCookie.get(url, {
+    return axiosWithCookie;
+  }
+  async requestUrl(url) {
+    const request = await this.initRequest(url);
+    return await request.get(url, {
+      headers: this.headers,
+    });
+  }
+  async requestFormUrl(url, data) {
+    const request = await this.initRequest(url);
+    return await request.post(url, data, {
       headers: this.headers,
     });
   }
@@ -103,14 +93,17 @@ class zhuanzhaun {
           const orderCache = this.childOrderCache[childOrderId] || {};
           const status = childOrder.statusText.text;
           if (!orderCache.orderId) {
-            await insertSheetData(this.spreadsheet_token, this.sheet_id2, this.insertSheetNo);
+            await insertSheetData(
+              this.spreadsheet_token,
+              this.sheet_id2,
+              this.insertSheetNo
+            );
             this.insertSheetNo++;
           }
           if (status !== orderCache.status) {
-            let childOrderInfo =
-              ["质检中", "质检中断"].includes(status)
-                ? { imei: "", amount: 0, subTitle: "", defect: "" }
-                : await this.getChildOrderInfo(childOrderId, orderCache);
+            let childOrderInfo = ["质检中", "质检中断"].includes(status)
+              ? { imei: "", amount: 0, subTitle: "", defect: "" }
+              : await this.getChildOrderInfo(childOrderId, orderCache);
             const prantOrderId = orderId;
             const { imei, amount, subTitle, defect, qcCode } = childOrderInfo;
             const rangeIndex = orderCache.no
@@ -132,55 +125,60 @@ class zhuanzhaun {
               this.sheet_id2,
               range,
               [newData]
-            )
+            );
             // 修改拍机堂表格状态
-            let orderChange
+            let orderChange;
             switch (status) {
               case "退回中":
                 orderChange = {
                   row: "C",
-                  val: "退回中"
-                }
+                  val: "退回中",
+                };
                 break;
               case "出售中":
                 orderChange = {
                   row: "J",
-                  val: amount
-                }
+                  val: amount,
+                };
                 break;
               case "买家已拍下":
                 orderChange = {
                   row: "C",
-                  val: "已出售"
-                }
+                  val: "已出售",
+                };
                 break;
               case "平台已发货":
                 orderChange = {
                   row: "C",
-                  val: "已出售"
-                }
+                  val: "已出售",
+                };
                 break;
               case "买家申请退货":
                 orderChange = {
                   row: "C",
-                  val: "出售中"
-                }
+                  val: "出售中",
+                };
                 break;
               case "已成交":
                 orderChange = {
                   row: "C",
-                  val: "已收款"
-                }
+                  val: "已收款",
+                };
                 break;
               default:
                 break;
             }
             if (orderChange) {
-              const res = await findSheetData(imei, this.spreadsheet_token,this.sheet_id)
-              const findArr = res.data.find_result.matched_cells
-              const findIndex = findArr[0] && findArr[0].slice(1)
-              const range = orderChange.row + findIndex + ":" + orderChange.row + findIndex
-              const newData = [orderChange.val]
+              const res = await findSheetData(
+                imei,
+                this.spreadsheet_token,
+                this.sheet_id
+              );
+              const findArr = res.data.find_result.matched_cells;
+              const findIndex = findArr[0] && findArr[0].slice(1);
+              const range =
+                orderChange.row + findIndex + ":" + orderChange.row + findIndex;
+              const newData = [orderChange.val];
               if (findIndex) {
                 // console.log('modifySheetData2',range, newData)
                 await modifySheetData(
@@ -188,15 +186,15 @@ class zhuanzhaun {
                   this.sheet_id,
                   range,
                   [newData]
-                )
+                );
               }
             }
             // 打印日志
-            logger.info(childOrderId, imei, status, amount, subTitle);
+            Logger.info(childOrderId, imei, status, amount, subTitle);
           }
         }
       } catch (error) {
-        logger.error("error", error);
+        Logger.error("error", error);
       }
     });
   }
@@ -223,14 +221,14 @@ class zhuanzhaun {
         };
         // 验机不合格的具体信息
         if (data.defectReportInfo && data.defect === "") {
-          childOrderInfo.defect = oldOrderInfo.defect + "||"
+          childOrderInfo.defect = oldOrderInfo.defect + "||";
           data.defectReportInfo.itemInfo.forEach((item) => {
             childOrderInfo.defect += item.itemName + ":" + item.value + "; ";
           });
         }
         return childOrderInfo;
       } catch (error) {
-        logger.error("error", error);
+        Logger.error("error", error);
         return "";
       }
     });
@@ -248,16 +246,26 @@ class zhuanzhaun {
           const imei = list ? list[1].value : "";
           return imei;
         } catch (error) {
-          logger.error("error", error);
+          Logger.error("error", error);
           return "";
         }
       });
   }
 
   // 保存子订单数据成json和excel
-  async saveChildOrders(arr) {
-    createFile("./dataChildOrder.json", arr);
-    json2Excel(arr, "订单数据统计");
+  async getRankInfo(data) {
+    return await this.requestFormUrl(
+      `https://app.zhuanzhuan.com/zzopen/hypermall/getSubRankInfo`,
+      data
+    ).then(async (res) => {
+      try {
+        // Logger.info(res.data)
+        return res.data
+      } catch (error) {
+        Logger.error("error", error);
+        return "";
+      }
+    });
   }
 }
 

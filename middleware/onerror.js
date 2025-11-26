@@ -13,7 +13,7 @@ module.exports = async (ctx, next) => {
     }
   } catch (err) {
     const errData = err instanceof Error ? err.stack : err;
-    logger.error("Catch Error: " + errData);
+    Logger.error("Catch Error: " + errData);
     ctx.body = { code: 0, status: 500, msg: errData };
   }
 };

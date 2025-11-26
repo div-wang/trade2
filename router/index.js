@@ -74,7 +74,7 @@ const app = async (ctx, next) => {
     }
   } catch (err) {
     const errData = err instanceof Error ? err.stack : err;
-    logger.error("Router Error: ", errData);
+    Logger.error("Router Error: ", errData);
     ctx.body = errData;
   }
 };

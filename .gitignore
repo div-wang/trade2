@@ -14,7 +14,7 @@ logs/
 images/
 node_modules/
 start.log
-config/aigc/
+handler/paijitang/
 package-lock.json
 ffmpeg
 yarn.lock

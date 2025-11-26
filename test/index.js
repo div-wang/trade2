@@ -1,7 +1,9 @@
 const { findSheetData, modifySheetData } = require("../handler/feishu");
+const paijitang = require("../handler/paijitang");
+const zhuanzhuan = require("../handler/zhuanzhuan");
 
 const app = async () => {
-  // const {spreadsheet_token, sheet_id} = configs.grabInfo.ya
+  // const {spreadsheet_token, sheet_id} = Configs.grabInfo.ya
   // await modifySheetData(
   //   spreadsheet_token,
   //   sheet_id,
@@ -11,15 +13,20 @@ const app = async () => {
   //   console.log(res);
   // });
 
-  // 订单详情
-  // await zhuan.getChildOrderIds("1984923973253595158");
 
-  // 子订单详情
-  // const childOrderInfo = await this.getChildOrderInfo("1984798001071129113", {})
-
-  // 获取imei
-  // const getIMEIResult = await getIMEI("974690130");
-  // console.log("getIMEIResult", getIMEIResult);
+  // const clent = new paijitang(Configs.grabInfo.hui.paijitang)
+  // const res = await clent.refund()
+  // Logger.info(res.data)
+  const zhuan = new zhuanzhuan(Configs.grabInfo.hui.zhuanzhuan);
+  const data = await zhuan.getRankInfo({
+        tabToken: "qy01da601ec723b205288e2587b0_1703041199959",
+        relationId: "22",
+        platformType: "zz",
+        refContent: "sjtab",
+        rankIds: "463",
+        isFirst: true,
+      })
+  Logger.info(data.respData.subRankInfoList)
 };
 
 module.exports = app;

@@ -3,7 +3,7 @@
  * @Author: Div
  * @Date: 2019-08-19 10:14:15
  * @LastEditors: Div gh110827@gmail.com
- * @LastEditTime: 2025-11-07 19:18:52
+ * @LastEditTime: 2025-11-26 11:41:42
  */
 
 const http = require("http");
@@ -27,11 +27,14 @@ global.randomNum = (minNum, maxNum) => {
   return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
 };
 
-global.env = process.env.NODE_ENV || "local";
-// 全局注册logger
-global.logger = require("./utils/logger");
+global.Env = process.env.NODE_ENV || "local";
+// 全局注册Logger
+global.Logger = require("./utils/Logger");
 // 全局注册配置文件
-global.configs = require("./config");
+global.Configs = require("./config");
+// 全局注册缓存文件
+global.ChildOrderCache = {}
+global.RankOrderCache = {}
 
 const start = async () => {
   // 处理middleware
@@ -43,8 +46,8 @@ const start = async () => {
   app.use(routers);
   // 监听http和https
   const httpServer = http.createServer(app.callback());
-  httpServer.listen(configs.port, async () => {
-    logger.info(`listen: ${configs.port}`);
+  httpServer.listen(Configs.port, async () => {
+    Logger.info(`listen: ${Configs.port}`);
     if (process.env.DEBUG_ENV) {
       const test = require("./test");
       test();
@@ -54,5 +57,5 @@ const start = async () => {
 try {
   start();
 } catch (error) {
-  logger.error(error);
+  Logger.error(error);
 }

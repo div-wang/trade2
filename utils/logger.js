@@ -5,13 +5,13 @@
  * @LastEditors: Div gh110827@gmail.com
  * @LastEditTime: 2025-11-11 21:19:55
  */
-const logger = require("tracer").dailyfile({
+const Logger = require("tracer").dailyfile({
   root: "./logs",
   format: "{{timestamp}} <{{title}}> ({{file}}:{{line}}) {{message}}",
   dateformat: "yyyy-mm-dd HH:MM:ss.L",
-  allLogsFileName: `trade2-${env}`,
+  allLogsFileName: `trade2-${Env}`,
   transport: function (data) {
-    if (env === "local") console.log(data.output);
+    if (Env === "local") console.log(data.output);
   },
   inspectOpt: {
     showHidden: true, //the object's non-enumerable properties will be shown too
@@ -19,4 +19,4 @@ const logger = require("tracer").dailyfile({
   },
 });
 
-module.exports = logger;
+module.exports = Logger;

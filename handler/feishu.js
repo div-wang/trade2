@@ -1,5 +1,13 @@
+/*
+ * @Author: Div gh110827@gmail.com
+ * @Date: 2025-11-12 20:47:44
+ * @LastEditors: Div gh110827@gmail.com
+ * @LastEditTime: 2025-11-17 16:23:45
+ * @Description: 
+ * Copyright (c) 2025 by ${git_name_email}, All Rights Reserved. 
+ */
 const lark = require("@larksuiteoapi/node-sdk");
-const client = new lark.Client(configs.lark);
+const client = new lark.Client(Configs.lark);
 
 const getSpreadsheetSheets = async (spreadsheet_token) => {
   return client.sheets.v3.spreadsheetSheet.query({

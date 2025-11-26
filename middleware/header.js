@@ -24,7 +24,7 @@ module.exports = async (ctx, next) => {
   }
   let { ip, ips, body } = ctx.request;
   // 打印日志
-  logger.info(
+  Logger.info(
     `${ctx.url}:${
       ctx.method === "POST" ? JSON.stringify(body) : ""
     }, user IP: ${ip.replace("::ffff:", "")}, ${JSON.stringify(ips)}`

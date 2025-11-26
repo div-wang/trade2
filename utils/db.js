@@ -19,7 +19,7 @@ const app = (conf) => {
       acquire: 30000,
       idle: 10000,
     },
-    logging: (msg) => logger.debug(msg),
+    logging: (msg) => Logger.debug(msg),
   });
 };
 
