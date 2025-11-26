@@ -2,7 +2,7 @@
  * @Author: Div gh110827@gmail.com
  * @Date: 2025-10-26 21:35:47
  * @LastEditors: Div gh110827@gmail.com
- * @LastEditTime: 2025-11-26 11:47:02
+ * @LastEditTime: 2025-11-26 21:06:07
  * @Description:
  * Copyright (c) 2025 by ${git_name_email}, All Rights Reserved.
  */
@@ -15,7 +15,7 @@ const {
   findSheetData,
   modifySheetData,
   insertSheetData,
-} = require("./feishu");
+} = require("../feishu");
 
 class zhuanzhaun {
   // 构造方法（初始化实例属性）
@@ -27,10 +27,6 @@ class zhuanzhaun {
     this.childOrderCache = ChildOrderCache[this.user] || {}
     this.insertSheetNo = 1;
   }
-  // async init() {
-  //   this.childOrderCache = ChildOrderCache[this.user] || {}
-  //   this.insertSheetNo = 1;
-  // }
   async initRequest(url) {
     // 创建 CookieJar 实例（自动管理 Cookie）
     const cookieJar = new CookieJar();
@@ -252,7 +248,7 @@ class zhuanzhaun {
       });
   }
 
-  // 保存子订单数据成json和excel
+  // 获取产品型号排名数据
   async getRankInfo(data) {
     return await this.requestFormUrl(
       `https://app.zhuanzhuan.com/zzopen/hypermall/getSubRankInfo`,

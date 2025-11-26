@@ -6,7 +6,7 @@ const app = async (ctx) => {
     let { list, user } = ctx.request.body;
     for (let i = 0; i < list.length; i++) {
       const imei = list[i];
-      const { spreadsheet_token, sheet_id } = Configs.grabInfo[user];
+      const { spreadsheet_token, sheet_id } = Configs.lark[user];
       const res = await findSheetData(imei, spreadsheet_token, sheet_id)
       if (!res) continue;
       // console.log(imei, res);

@@ -3,7 +3,7 @@
  * @Author: Div
  * @Date: 2019-08-19 10:14:15
  * @LastEditors: Div gh110827@gmail.com
- * @LastEditTime: 2025-11-26 11:41:42
+ * @LastEditTime: 2025-11-26 21:07:43
  */
 
 const http = require("http");
@@ -34,9 +34,11 @@ global.Logger = require("./utils/Logger");
 global.Configs = require("./config");
 // 全局注册缓存文件
 global.ChildOrderCache = {}
-global.RankOrderCache = {}
+global.RankInfoCache = {}
+
 
 const start = async () => {
+  const cacheSheet = require("./handler/cacheSheet");
   // 处理middleware
   const header = require("./middleware/header");
   const onerror = require("./middleware/onerror");
@@ -44,6 +46,7 @@ const start = async () => {
   app.use(onerror);
   app.use(header);
   app.use(routers);
+  await cacheSheet()
   // 监听http和https
   const httpServer = http.createServer(app.callback());
   httpServer.listen(Configs.port, async () => {

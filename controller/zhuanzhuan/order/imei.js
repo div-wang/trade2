@@ -4,7 +4,7 @@ const app = async (ctx) => {
   let req = { code: 0, msg: "ok" };
   try {
     let { qcCode, user } = ctx.request.body;
-    const config = Configs.grabInfo[user].zhuanzhuan;
+    const config = Configs.zhuanzhuan[user];
     const zhuan = new zhuanzhuan(config);
     const getIMEIResult = await zhuan.getIMEI(qcCode);
     // Logger.info(getIMEIResult);
