@@ -3,7 +3,7 @@
  * @Author: Div
  * @Date: 2019-08-19 10:14:15
  * @LastEditors: Div gh110827@gmail.com
- * @LastEditTime: 2025-11-26 21:07:43
+ * @LastEditTime: 2025-11-27 15:59:36
  */
 
 const http = require("http");
@@ -22,11 +22,6 @@ app.use(
   })
 );
 
-// 生成随机数
-global.randomNum = (minNum, maxNum) => {
-  return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
-};
-
 global.Env = process.env.NODE_ENV || "local";
 // 全局注册Logger
 global.Logger = require("./utils/Logger");
@@ -35,7 +30,22 @@ global.Configs = require("./config");
 // 全局注册缓存文件
 global.ChildOrderCache = {}
 global.RankInfoCache = {}
-
+// 生成随机数
+global.randomNum = (minNum, maxNum) => {
+  return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+};
+// 睡眠函数，毫秒
+global.sleep = (time, options) => {
+  return new Promise((resolve, reject) => {
+    time = time || randomNum(100, 1000);
+    if (options && options.logs) {
+      Logger.info(`===暂停${parseInt(time / 1000)}秒===`);
+    }
+    setTimeout(() => {
+      resolve(true);
+    }, time);
+  });
+};
 
 const start = async () => {
   const cacheSheet = require("./handler/cacheSheet");

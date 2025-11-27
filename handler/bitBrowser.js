@@ -34,7 +34,7 @@ const checkBrowserOpenTime = async (id) => {
   return await openBrowser({ id });
 };
 
-const openBrowserPage = async(id) => {
+const openBrowserPage = async(browserId) => {
   // 打开比特浏览器
   const bitBrowser = await checkBrowserOpenTime(browserId);
   if (!bitBrowser.success) return false;

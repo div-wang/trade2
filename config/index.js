@@ -66,7 +66,7 @@ const lark = {
 };
 
 module.exports = {
-  browserList: {},
+  browserList: {'f9cde976ed654d1a88527fb76decb639':{}},
   port: 9000,
   lark,
   zhuanzhuan,

@@ -14,7 +14,6 @@ logs/
 images/
 node_modules/
 start.log
-handler/paijitang/
 package-lock.json
 ffmpeg
 yarn.lock
