@@ -92,27 +92,26 @@ const app = async () => {
         modelSoldNum,
         name,
       };
-      Logger.info(item);
-      // console.log(RankInfoCache.index)
+      Logger.info(name);
       if (RankInfoCache[modelId]) {
-        RankInfoCache[modelId]["销售数量"] !== modelSoldNum
-          ? await modifySheetDataProxy("D", modelSoldNum)
+        RankInfoCache[modelId]["月销量"] !== modelSoldNum
+          ? await modifySheetDataProxy(RankInfoCache[modelId].index, "D", modelSoldNum)
           : "";
-        RankInfoCache[modelId]["最低价格"]  !== bottomPrice
-          ? await modifySheetDataProxy("E", bottomPrice)
+        RankInfoCache[modelId]["最低价"]  !== bottomPrice
+          ? await modifySheetDataProxy(RankInfoCache[modelId].index, "E", bottomPrice)
           : "";
+        await modifySheetDataProxy(RankInfoCache[modelId].index, "F", clickUrl)
       } else {
         await insertSheetData(spreadsheet_token, sheet_id, RankInfoCache.index);
         RankInfoCache.index += 1;
-        await modifySheetDataProxy("A", rankInfo, "F");
+        await modifySheetDataProxy(RankInfoCache.index, "A", rankInfo, "F");
         RankInfoCache[rankInfo.modelId] = rankInfo;
       }
     }
   }
 };
 
-const modifySheetDataProxy = async (start, data, end) => {
-  const index = RankInfoCache.index;
+const modifySheetDataProxy = async (index, start, data, end) => {
   const range = start + index + ":" + (end || start) + index;
   const newData =
     typeof data === "object"

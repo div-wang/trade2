@@ -9,7 +9,7 @@ const app = async (ctx) => {
     const list = await zhuan.getOrderIds();
     Logger.info("orderIds", list);
     for (let i = 0; i < list.length; i++) {
-      if (i > 16) continue;
+      if (i > 15) continue;
       const orderId = list[i];
       await zhuan.getChildOrderIds(orderId);
     }

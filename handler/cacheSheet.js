@@ -11,6 +11,7 @@ const getOrderSheetData = async (user) => {
   const res = await getSheetData(spreadsheet_token, sheet_id2, "");
   const values = res.data.valueRange.values;
   const fieldArr = values[0];
+  ChildOrderCache[user] = {};
   for (let index = 1; index < values.length; index++) {
     const arr = values[index];
     const childOrder = {};
@@ -19,7 +20,6 @@ const getOrderSheetData = async (user) => {
     }
     // 缓存数据
     childOrder.no = index;
-    ChildOrderCache[user] = {};
     ChildOrderCache[user][childOrder.orderId] = childOrder;
   }
 };
@@ -31,7 +31,7 @@ const getRankSheetData = async () => {
   const fieldArr = values[0];
   for (let index = 1; index < values.length; index++) {
     const arr = values[index];
-    const rankInfo = {};
+    const rankInfo = {index: index+1};
     for (let j = 0; j < arr.length; j++) {
       rankInfo[fieldArr[j]] = arr[j];
     }

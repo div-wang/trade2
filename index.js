@@ -3,7 +3,7 @@
  * @Author: Div
  * @Date: 2019-08-19 10:14:15
  * @LastEditors: Div gh110827@gmail.com
- * @LastEditTime: 2025-11-27 15:59:36
+ * @LastEditTime: 2025-11-28 20:20:08
  */
 
 const http = require("http");
@@ -35,12 +35,9 @@ global.randomNum = (minNum, maxNum) => {
   return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
 };
 // 睡眠函数，毫秒
-global.sleep = (time, options) => {
+global.sleep = (time, end) => {
   return new Promise((resolve, reject) => {
-    time = time || randomNum(100, 1000);
-    if (options && options.logs) {
-      Logger.info(`===暂停${parseInt(time / 1000)}秒===`);
-    }
+    time = time && !end ? time : randomNum(time || 300, end || 1000);
     setTimeout(() => {
       resolve(true);
     }, time);

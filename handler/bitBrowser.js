@@ -40,9 +40,8 @@ const openBrowserPage = async(browserId) => {
   if (!bitBrowser.success) return false;
   // 使用playwright链接浏览器
   const browser = await chromium.connectOverCDP(bitBrowser.data.ws);
-  const defaultContext = browser.contexts()[0];
-  const page = await defaultContext.newPage();
-  return page
+  const context = browser.contexts()[0];
+  return {browser, context}
 }
 
 module.exports = { getBrowsers, checkBrowserOpenTime, openBrowserPage };

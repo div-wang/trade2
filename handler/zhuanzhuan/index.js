@@ -2,7 +2,7 @@
  * @Author: Div gh110827@gmail.com
  * @Date: 2025-10-26 21:35:47
  * @LastEditors: Div gh110827@gmail.com
- * @LastEditTime: 2025-11-26 21:06:07
+ * @LastEditTime: 2025-11-29 18:21:32
  * @Description:
  * Copyright (c) 2025 by ${git_name_email}, All Rights Reserved.
  */
@@ -17,14 +17,17 @@ const {
   insertSheetData,
 } = require("../feishu");
 
-class zhuanzhaun {
+class zhuanzhuan {
   // 构造方法（初始化实例属性）
   constructor(data) {
     for (const key in data) {
       this[key] = data[key];
     }
+    for (const key in Configs.lark[data.user]) {
+      this[key] =  Configs.lark[data.user][key];
+    }
     //子订单缓存数据
-    this.childOrderCache = ChildOrderCache[this.user] || {}
+    this.childOrderCache = ChildOrderCache[this.user] || {};
     this.insertSheetNo = 1;
   }
   async initRequest(url) {
@@ -65,6 +68,7 @@ class zhuanzhaun {
       `https://app.zhuanzhuan.com/zzx/transfer/getSellerOrders2?pageNum=1&pageSize=20&tipId=2&keyWords=&abGroup=2`
     ).then((res) => {
       const respData = res.data.respData;
+      // console.log(res)
       if (respData && respData.orderList) {
         const arr = [];
         res.data.respData.orderList.forEach((order) => {
@@ -190,7 +194,7 @@ class zhuanzhaun {
           }
         }
       } catch (error) {
-        Logger.error("error", error);
+        Logger.error("error", "getChildOrderIds");
       }
     });
   }
@@ -256,7 +260,7 @@ class zhuanzhaun {
     ).then(async (res) => {
       try {
         // Logger.info(res.data)
-        return res.data
+        return res.data;
       } catch (error) {
         Logger.error("error", error);
         return "";
@@ -265,4 +269,4 @@ class zhuanzhaun {
   }
 }
 
-module.exports = zhuanzhaun;
+module.exports = zhuanzhuan;
