@@ -3,7 +3,7 @@
  * @Author: Div
  * @Date: 2019-08-19 10:14:15
  * @LastEditors: Div gh110827@gmail.com
- * @LastEditTime: 2025-11-28 20:20:08
+ * @LastEditTime: 2025-11-29 18:50:59
  */
 
 const http = require("http");
@@ -24,7 +24,7 @@ app.use(
 
 global.Env = process.env.NODE_ENV || "local";
 // 全局注册Logger
-global.Logger = require("./utils/Logger");
+global.Logger = require("./utils/logger");
 // 全局注册配置文件
 global.Configs = require("./config");
 // 全局注册缓存文件
