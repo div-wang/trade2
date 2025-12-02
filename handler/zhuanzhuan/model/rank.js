@@ -1,5 +1,5 @@
-const { modifySheetData, insertSheetData } = require("../feishu");
-const zhuanzhuan = require("./index");
+const { modifySheetData, insertSheetData } = require("../../feishu");
+const zhuanzhuan = require("../index");
 const rankIds = {
   总榜: 463,
   安卓: 6840,
@@ -60,8 +60,8 @@ const rankIds = {
   // 安卓游戏: 6604,
   // iPhone准新机: 6838,
   // 华为准新机: 6850,
-  // 小折叠屏: 683,
-  // 大折叠屏: 682,
+  小折叠屏: 683,
+  大折叠屏: 682,
   //  折叠屏: 6935,
 };
 const { spreadsheet_token, sheet_id } = Configs.lark.zzRank;

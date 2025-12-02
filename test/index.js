@@ -3,9 +3,9 @@ const {
   modifySheetData,
   insertSheetData,
 } = require("../handler/feishu");
-const getRankInfo = require("../handler/zhuanzhuan/rank");
-const detailPage = require("../handler/zhuanzhuan/detail");
-const levelPrice = require("../handler/zhuanzhuan/levelPrice");
+const getRankInfo = require("../handler/zhuanzhuan/model/rank");
+const detailPage = require("../handler/zhuanzhuan/model/detail");
+const modelStorge = require("../handler/zhuanzhuan/model/storage");
 const bidding = require("../handler/paijitang/bidding");
 
 const app = async () => {
@@ -19,9 +19,8 @@ const app = async () => {
   //   console.log(res);
   // });
 
-  // await getRankInfo()
   // await bidding({category: "手机", brand:"小米", model: "小米 15"})
-  // await levelPrice()
+  // await modelStorge()
 };
 
 module.exports = app;

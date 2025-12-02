@@ -1,4 +1,4 @@
-const getRankInfo = require("../../handler/zhuanzhuan/rank");
+const getRankInfo = require("../../../handler/zhuanzhuan/model/rank");
 const app = async (ctx) => {
   let req = { code: 0, msg: "ok" };
   try {

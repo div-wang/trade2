@@ -3,7 +3,7 @@
  * @Author: Div
  * @Date: 2019-08-19 10:14:15
  * @LastEditors: Div gh110827@gmail.com
- * @LastEditTime: 2025-11-29 18:50:59
+ * @LastEditTime: 2025-12-01 23:08:10
  */
 
 const http = require("http");
@@ -30,14 +30,15 @@ global.Configs = require("./config");
 // 全局注册缓存文件
 global.ChildOrderCache = {}
 global.RankInfoCache = {}
+global.ModelInfoListCache = []
 // 生成随机数
-global.randomNum = (minNum, maxNum) => {
+global.RandomNum = (minNum, maxNum) => {
   return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
 };
 // 睡眠函数，毫秒
-global.sleep = (time, end) => {
+global.Sleep = (time, end) => {
   return new Promise((resolve, reject) => {
-    time = time && !end ? time : randomNum(time || 300, end || 1000);
+    time = time && !end ? time : RandomNum(time || 300, end || 1000);
     setTimeout(() => {
       resolve(true);
     }, time);

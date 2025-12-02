@@ -2,7 +2,7 @@
  * @Author: Div gh110827@gmail.com
  * @Date: 2025-10-26 21:35:47
  * @LastEditors: Div gh110827@gmail.com
- * @LastEditTime: 2025-11-29 18:21:32
+ * @LastEditTime: 2025-12-01 23:12:19
  * @Description:
  * Copyright (c) 2025 by ${git_name_email}, All Rights Reserved.
  */
@@ -17,6 +17,30 @@ const {
   insertSheetData,
 } = require("../feishu");
 
+const filterPrams = {
+  storage: {
+    "64G": { value: "5196", style: "201", cmd: "params_new6651=511434" },
+    "128G": { value: "4895", style: "201", cmd: "params_new6651=678741" },
+    "256G": { value: "5048", style: "201", cmd: "params_new6651=678742" },
+    "512G": { value: "5170", style: "201", cmd: "params_new6651=1080730" },
+    "1T": { value: "4975", style: "201", cmd: "params_new6651=1081373" },
+    "16G+1T": { value: "11396", style: "201", cmd: "params_new6651=881018" },
+    "12G+256G": { value: "8119", style: "201", cmd: "params_new6651=1085068" },
+    "16G+512G": { value: "8143", style: "201", cmd: "params_new6651=1093199" },
+    "16G+256G": { value: "8114", style: "201", cmd: "params_new6651=1093399" },
+    "8G+128G": { value: "8124", style: "201", cmd: "params_new6651=1084339" },
+    "8G+256G": { value: "5230", style: "201", cmd: "params_new6651=1084341" },
+    "12G+512G": { value: "8128", style: "201", cmd: "params_new6651=1084345" },
+    "24G+1T": { value: "24808", style: "201", cmd: "params_new6651=1213326" },
+  },
+  sort: {
+    general: { value: "sp00", style: "320", cmd: "sortpolicy=0" },
+    now: { value: "sp5", style: "320", cmd: "sortpolicy=1" },
+    desc: { value: "sp2", style: "320", cmd: "sortpolicy=2" },
+    asc: { value: "sp3", style: "320", cmd: "sortpolicy=3" },
+  },
+  level: {},
+};
 class zhuanzhuan {
   // 构造方法（初始化实例属性）
   constructor(data) {
@@ -24,7 +48,7 @@ class zhuanzhuan {
       this[key] = data[key];
     }
     for (const key in Configs.lark[data.user]) {
-      this[key] =  Configs.lark[data.user][key];
+      this[key] = Configs.lark[data.user][key];
     }
     //子订单缓存数据
     this.childOrderCache = ChildOrderCache[this.user] || {};
@@ -257,6 +281,76 @@ class zhuanzhuan {
     return await this.requestFormUrl(
       `https://app.zhuanzhuan.com/zzopen/hypermall/getSubRankInfo`,
       data
+    ).then(async (res) => {
+      try {
+        // Logger.info(res.data)
+        return res.data;
+      } catch (error) {
+        Logger.error("error", error);
+        return "";
+      }
+    });
+  }
+  async getGoodsList({ sort = "desc", storage, modelId, brandId }) {
+    const sorts = filterPrams.sort[sort];
+    const storages = filterPrams.storage[storage];
+    return await this.requestFormUrl(
+      `https://app.zhuanzhuan.com/zzopen/ypmall/listData`,
+      {
+        param: JSON.stringify({
+          showBatteryMore: true,
+          ypFirstSearch: null,
+          isShowGoodProductGoodPrice: true,
+          filter: "5461:101;;keyword:;tab:0",
+          pgCateInfo: "101",
+          listInfoType: "fullInfo",
+          initFrom: "G1001_sj_diamond_5816_6",
+          secondFrom: "101_440",
+          extraMetricInfo: "",
+          labelIdList: "",
+          pageIndex: 1,
+          filterItems: {
+            232: [
+              { value: "28350", style: "117", cmd: "params_new13144=1214785" },
+              { value: "28351", style: "117", cmd: "params_new13144=1214786" },
+            ],
+            69: [storages],
+            st6: [
+              {
+                cmd: `pg_cate_brand_model=101,${brandId},0,${modelId}`,
+                style: "209",
+                value: `101,${brandId},0,${modelId}`,
+                type: "model",
+              },
+            ],
+            st7: [sorts],
+          },
+          listSearchType: "baseList",
+          pageSize: 16,
+          rstmark: Date.now(),
+          firstFrom: "recommendRank",
+          otherParams: { pgCate: "101,0,0", abLayer: "personalSupply" },
+          tab: 0,
+          listLayout: 1,
+          redMetaId: "",
+          activityZoneId: "",
+          specialSubjectId: "",
+          labelIdGroup: "",
+          archiveid: "",
+          archivemd5: "",
+          promote: "100",
+          paramsNew: "",
+          recMarkType: 3,
+          list930Type: 1,
+          searchResultSource: 1,
+          jrInfoId: "",
+          sellerUid: "",
+          openComparison: 1,
+          jrCateParams: "[]",
+          tabListWithOutFilter: 0,
+          isNeedPriceAttention: false,
+        }),
+      }
     ).then(async (res) => {
       try {
         // Logger.info(res.data)

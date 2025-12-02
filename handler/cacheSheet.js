@@ -31,13 +31,21 @@ const getRankSheetData = async () => {
   const fieldArr = values[0];
   for (let index = 1; index < values.length; index++) {
     const arr = values[index];
-    const rankInfo = {index: index+1};
-    for (let j = 0; j < arr.length; j++) {
-      rankInfo[fieldArr[j]] = arr[j];
-    }
+    const rankInfo = {
+      index: index+1,
+      brandId: arr[0],
+      price: arr[4],
+      url: arr[5],
+      modelId: arr[1],
+      soldNum: arr[3],
+      name: arr[2],
+      levelPrice: arr[6]
+    };
+    ModelInfoListCache.push(rankInfo)
     // 缓存数据
-    RankInfoCache[rankInfo["型号Id"]] = rankInfo;
+    RankInfoCache[rankInfo.modelId] = rankInfo;
   }
+  ModelInfoListCache.sort((a, b) => b.soldNum - a.soldNum);
   RankInfoCache.index = values.length;
 };
 

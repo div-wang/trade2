@@ -1,4 +1,4 @@
-const { getBrowsers, openBrowserPage } = require("../bitBrowser");
+const { getBrowsers, openBrowserPage } = require("../../bitBrowser");
 
 const quality = {
   "https://pic3.zhuanstatic.com/zhuanzh/9df43ea0-84bc-4727-b070-53f9ce280a57.png":
@@ -28,7 +28,7 @@ const quality = {
 const detailPage = async (url) => {
   Logger.info("开始打开比特浏览器");
   const { browser, context } = await openBrowserPage(
-    "f9cde976ed654d1a88527fb76decb639"
+    Configs.browserId
   );
   const newPage = await context.newPage();
   Logger.info("打开转转型号页面");
@@ -44,72 +44,70 @@ const detailSearch = async (page, data) => {
   await page.click(
     '.z-biz-filter-tab__horizontal__list__item__wrapper__text:has-text("价格")'
   );
-  await sleep();
+  await Sleep();
 
   // 监听数据
   await interceptApi(page);
   // 筛选参数
-  const levels = ["8成新", "9成新", "95新"];
-  for (let i = 0; i < levels.length; i++) {
-    const level = levels[i];
-    // 缓存选中等级
-    levelCache = level
-    // 点击等级筛选
-    await page.click(
-      '.z-biz-quick-filter__horizontal__list__item__select:has-text("等级")'
-    );
-    // 取消上一个等级
-    const prevLevel = levels[i - 1];
-    prevLevel && (await page.click(`li[zz-sortname="${prevLevel}"]`));
-    await sleep();
-    // 选择对应等级
-    await page.click(`li[zz-sortname="${level}"]`);
-    await sleep();
-    await page.click('.z-quick-check-panel__confirm:has-text("确定")');
-    await sleep(2000, 5000);
+  // const levels = ["8成新", "9成新", "95新"];
+  // for (let i = 0; i < levels.length; i++) {
+  //   const level = levels[i];
+  //   // 缓存选中等级
+  //   levelCache = level;
+  //   // 点击等级筛选
+  //   await page.click(
+  //     '.z-biz-quick-filter__horizontal__list__item__select:has-text("等级")'
+  //   );
+  //   // 取消上一个等级
+  //   const prevLevel = levels[i - 1];
+  //   prevLevel && (await page.click(`li[zz-sortname="${prevLevel}"]`));
+  //   await Sleep();
+  //   // 选择对应等级
+  //   await page.click(`li[zz-sortname="${level}"]`);
+  //   await Sleep();
+  //   await page.click('.z-quick-check-panel__confirm:has-text("确定")');
+  //   await Sleep(2000, 5000);
 
-    // 点击容量筛选
-    await storageSelect(page)
-    // 确定按钮组
-    const confirmBtns = await page.$$(
-      '.z-quick-check-panel__confirm:has-text("确定")'
-    );
-    // 循环点击容量数据
-    const wrappers = await page.$$(".z-quick-check-panel__wrapper");
-    const storageEl = wrappers[1];
-    const storageItems = await storageEl.$$(
-      ".z-quick-check-panel__wrapper__item"
-    );
-    for (let j = 0; j < storageItems.length; j++) {
-      if (i > 0 && i%2 === 1 && j === storageItems.length - 1) continue;
-      if (i > 0 && i%2 === 0 && j === storageItems.length - 2) continue;
-      // 容量参数每次需要点击弹出选择框，
-      if (j > 0) {
-        await storageSelect(page)
-      }
-      // 点击容量
-      const sItem = storageItems[j];
-      // 缓存选中容量
-      storageCache = await sItem.innerText()
-      await sItem.click();
-      await sleep();
-      // 点击确定按钮
-      await confirmBtns[1].click();
-      await sleep(3000, 5000);
+  // }
+  // 点击容量筛选
+  await storageSelect(page);
+  // 确定按钮组
+  const confirmBtns = await page.$$(
+    '.z-quick-check-panel__confirm:has-text("确定")'
+  );
+  // 循环点击容量数据
+  const wrappers = await page.$$(".z-quick-check-panel__wrapper");
+  const storageEl = wrappers[0];
+  const storageItems = await storageEl.$$(
+    ".z-quick-check-panel__wrapper__item"
+  );
+  for (let j = 0; j < storageItems.length; j++) {
+    if (i > 0 && i % 2 === 1 && j === storageItems.length - 1) continue;
+    if (i > 0 && i % 2 === 0 && j === storageItems.length - 2) continue;
+    // 容量参数每次需要点击弹出选择框，
+    if (j > 0) {
+      await storageSelect(page);
     }
+    // 点击容量
+    const sItem = storageItems[j];
+    // 缓存选中容量
+    storageCache = await sItem.innerText();
+    await sItem.click();
+    await Sleep();
+    // 点击确定按钮
+    await confirmBtns[1].click();
+    await Sleep(3000, 5000);
   }
 };
 
-const storageSelect = async (page, each)=> {
+const storageSelect = async (page, each) => {
   await page.click(
     '.z-biz-quick-filter__horizontal__list__item__select:has-text("容量")'
   );
-  await sleep();
-  const resetBtns = await page.$$(
-    '.z-button__text-main:has-text("重置")'
-  );
-  await resetBtns[1].click()
-}
+  await Sleep();
+  const resetBtns = await page.$$('.z-button__text-main:has-text("重置")');
+  await resetBtns[0].click();
+};
 
 const interceptApi = async (page) => {
   // 拦截指定接口（支持精确URL、正则匹配）
@@ -124,11 +122,11 @@ const interceptApi = async (page) => {
         const { realPayPrice, titlePrefixLabel } = e;
         const Q = quality[titlePrefixLabel];
         // const word = Q && Q.includes(levelCache) ? Q.replace(levelCache, '') : ''
-        if (!Q || !storageCache || Q.includes('C')) return;
-        const key = `${Q}-${storageCache}`
-        let price = levelPriceData[key]
-        if (price && price < realPayPrice) return
-        levelPriceData[key] = realPayPrice
+        if (!Q || !storageCache || Q.includes("C")) return;
+        const key = `${Q}-${storageCache}`;
+        let price = levelPriceData[key];
+        if (price && price < realPayPrice) return;
+        levelPriceData[key] = realPayPrice;
       });
       // console.log(levelPriceData);
     }
@@ -143,8 +141,8 @@ const app = async (url) => {
   storageCache = "";
   const page = await detailPage(url);
   await detailSearch(page);
-  await page.close()
-  return levelPriceData
+  await page.close();
+  return levelPriceData;
 };
 
 module.exports = app;

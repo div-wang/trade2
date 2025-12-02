@@ -22,6 +22,7 @@ const biddingListPage = async (context) => {
     );
   } else {
     await page.reload();
+    await Sleep(1000, 3000);
   }
   return page;
 };
@@ -34,7 +35,7 @@ const biddingDetailPage = async (context, listPage) => {
     );
     if (allLinks.length) {
       await allLinks[allLinks.length - 1].click(); // 操作最后一个元素
-      await sleep(1000);
+      await Sleep(1000);
       // 等待并获取新页面
       pages = await context.pages();
       page = pages[pages.length - 1];
@@ -53,48 +54,56 @@ const biddingSearch = async (page, data) => {
     ".pjt-next-antd-input.css-r66u5c"
   );
   await moduleInput.click();
-  await sleep();
+  await Sleep();
   // 手机型号
   await page.click(`button:has-text("${data.category}")`);
-  await sleep();
+  await Sleep();
   await page.click(`button:has-text("${data.brand}")`);
-  await sleep();
+  await Sleep();
   await page.click(`span:text-is("${data.model}")`);
-  await sleep();
+  await Sleep();
   await page.click('button:has-text("确 认")');
-  await sleep();
+  await Sleep();
   // 成色
   await page.click('span:has-text("请选择等级")');
-  await sleep();
+  await Sleep();
   await page
     .locator(".pjt-next-antd-select-tree-switcher_open")
     .first()
     .click();
-  await sleep();
+  await Sleep();
   await page.click('span[aria-label="Select S-B"]');
-  await sleep();
-  await page.click('span[aria-label="Select C-E"]');
-  await sleep();
+  await Sleep();
+  // await page.click('span[aria-label="Select C+1"]');
+  // await Sleep();
+  // await page.click('span[aria-label="Select C+"]');
+  // await Sleep();
+  // await page.click('span[aria-label="Select C+2"]');
+  // await Sleep();
+  // await page.click('span[aria-label="Select C1"]');
+  // await Sleep();
+  // await page.click('span[aria-label="Select C2"]');
+  // await Sleep();
   // 其他参数
   // await page.locator(".pjt-next-antd-select-selector").nth(3).click();
-  // await sleep();
+  // await Sleep();
   // await page.click('.pjt-next-antd-select-item-option-content:text("国行")');
-  // await sleep();
+  // await Sleep();
   // await page.click(
   //   '.pjt-next-antd-select-item-option-content:text("国行-其他")'
   // );
-  // await sleep();
+  // await Sleep();
   // 查询
   await page.click('button:has-text("查 询")');
-  await sleep();
+  await Sleep();
   await page.locator(".pjt-next-antd-select-selector").nth(5).click();
-  await sleep();
+  await Sleep();
   await page.click('div[title="50 条/页"]');
   await nextPage(page);
 };
 
 const nextPage = async (page) => {
-  await sleep(5000, 10000);
+  await Sleep(5000, 10000);
   const pages = await page.$$(".pjt-next-antd-pagination-item");
   const index = await page.getAttribute(
     ".pjt-next-antd-pagination-item-active",
@@ -111,41 +120,51 @@ const interceptApi = async (page) => {
   page.on("response", async (response) => {
     const url = response.url();
     const status = response.status(); // 响应状态码
-    if (status === 200 && url.includes("recycler-api/game-rounds/goods/dark/running/goods")) {
+    if (
+      status === 200 &&
+      url.includes("recycler-api/game-rounds/goods/dark/running/goods")
+    ) {
       const responseBody = await response.json(); // 响应体（JSON格式）
       const goods = responseBody && responseBody.data;
       goods.forEach((e) => {
-        console.log(e);
         const {
+          baseSaleGoodsNo,
           mainTitle,
-          viceTitle,
           levelName,
           startPrice,
           inspectionTypeName,
         } = e;
         const tArr = mainTitle.trim().split(" ");
-        const vArr = viceTitle.split("|");
-        const oArr = tArr[tArr.length - 1].split("+");
-        const data = {
-          color: tArr[tArr.length - 2],
-          memory: oArr[0],
-          storage: oArr[1],
-          level: levelName,
-          price: startPrice,
-          inspection: inspectionTypeName,
-          baoxiu: vArr[0],
-          channel: vArr[2],
-        };
-        // console.log(data)
+        let storage = '';
+        for (let i = 0; i < tArr.length; i++) {
+          const e = tArr[i]
+          if (e.charAt(e.length - 1) === 'G') storage = e;
+        }
+        const modelData = RankInfoCache[modelId];
+        const levelPrice = JSON.parse(modelData.levelPrice);
+        for (const key in levelPrice) {
+          if (key.includes(storage)) {
+            const price = levelPrice[key];
+            const newPrice = parseFloat(price - price * 0.11 - 49).toFixed(2)
+            const income = parseFloat(newPrice - startPrice).toFixed(2)
+            if(income > 50) {
+              console.log(mainTitle, key, startPrice, income, levelName, inspectionTypeName)
+              // console.log(e)
+            }
+          }
+        }
+        // console.log(mainTitle, startPrice)
       });
     }
   });
 };
 
+let modelId;
 const app = async (data) => {
   Logger.info("开始打开比特浏览器");
+  modelId = data.modelId;
   const { browser, context } = await openBrowserPage(
-    "f9cde976ed654d1a88527fb76decb639"
+    Configs.browserId
   );
   const listPage = await biddingListPage(context);
   const biddingPage = await biddingDetailPage(context, listPage);

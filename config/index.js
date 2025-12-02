@@ -62,11 +62,12 @@ const lark = {
   zzRank: {
     spreadsheet_token: "EhS9wGt6HifzStkoYgicQWOMnPd",
     sheet_id: "RDOOMS",
-  }
+  },
 };
 
 module.exports = {
-  browserList: {'f9cde976ed654d1a88527fb76decb639':{}},
+  browserId: "f9cde976ed654d1a88527fb76decb639",
+  browserList: { f9cde976ed654d1a88527fb76decb639: {} },
   port: 9000,
   lark,
   zhuanzhuan,
